@@ -211,7 +211,7 @@ README.html
 .mvn/
 mvnw
 mvnw.cmd
-qodana.yaml
+*.iml
 application.properties
 >>>>>>> Stashed changes
 
