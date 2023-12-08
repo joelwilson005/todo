@@ -1,7 +1,6 @@
 package com.joel.todo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.joel.todo.util.Encrypt;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,14 +21,10 @@ public class UserEntity implements UserDetails {
     @GeneratedValue
     private Long userId;
 
-    @Convert(converter = Encrypt.class)
     private String emailAddress;
-
-
-    @Convert(converter = Encrypt.class)
     private String firstName;
 
-    @Convert(converter = Encrypt.class)
+
     private String lastName;
 
     private Date dateOfBirth;
@@ -40,7 +35,6 @@ public class UserEntity implements UserDetails {
     @JsonIgnore
     private String password;
 
-    @Convert(converter = Encrypt.class)
     private String username;
 
     private AccountStatus accountStatus;
@@ -57,8 +51,7 @@ public class UserEntity implements UserDetails {
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<TodoList> todoLists = new ArrayList<>();
 
-    @Convert(converter = Encrypt.class)
-    private Integer resetPasswordToken;
+    private String resetPasswordToken;
 
     public UserEntity() {
 

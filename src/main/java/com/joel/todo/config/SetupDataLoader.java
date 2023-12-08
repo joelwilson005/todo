@@ -1,3 +1,4 @@
+// Importing necessary packages and classes
 package com.joel.todo.config;
 
 import com.joel.todo.model.Role;
@@ -8,14 +9,14 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+// This class is marked as a Spring component, so it will be automatically detected during classpath scanning.
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
-    // Flag to track whether data setup has already been performed.
-    private boolean alreadySetup = false;
-
     // RoleRepository instance to interact with the role database table.
     private final RoleRepository roleRepository;
+    // Flag to track whether data setup has already been performed.
+    private boolean alreadySetup = false;
 
     // Constructor to inject RoleRepository instance.
     @Autowired
@@ -24,6 +25,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     // Method triggered when the application context is refreshed.
+    // This method is marked as @Transactional, meaning that it is wrapped in a database transaction.
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {

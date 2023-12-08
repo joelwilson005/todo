@@ -2,12 +2,13 @@ package com.joel.todo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,6 +22,5 @@ public class TodoListResponseDto extends CreateTodoListDto {
 
     private boolean completed;
 
-    private List<ActionResponseDto> actionList = new ArrayList<>();
-
+    private List<ActionResponseDto> actionList;
 }

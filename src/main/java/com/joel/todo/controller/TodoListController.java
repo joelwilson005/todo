@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @RestController
 @RequestMapping({"/users/{userId}/todos", "/users/{userId}/todos/"})
 public class TodoListController {
@@ -34,7 +35,8 @@ public class TodoListController {
     private final ActionMapper actionMapper;
 
     @Autowired
-    public TodoListController(TodoListService todoListService, TodoListMapper todoListMapper, ActionMapper actionMapper) {
+    public TodoListController(TodoListService todoListService, TodoListMapper todoListMapper,
+                              ActionMapper actionMapper) {
 
         this.todoListService = todoListService;
         this.todoListMapper = todoListMapper;
@@ -45,7 +47,8 @@ public class TodoListController {
     // Endpoint to get paginated todo lists for a user
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("authentication.principal.claims['userId'] == #userId and authentication.principal.claims['roles'] == 'USER'")
-    public ResponseEntity<?> getTodoLists(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "1") int size, @PathVariable Long userId) {
+    public ResponseEntity<?> getTodoLists(@RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "1") int size, @PathVariable Long userId) {
 
         Sort sort = Sort.by(Sort.Order.asc("createdAt"));
         Page<TodoList> todoListPage;
@@ -72,12 +75,13 @@ public class TodoListController {
 
         List<TodoList> todoLists = todoListPage.getContent();
 
-        // Map each todoList to a todoListResponseDto and add it to a List<TodoListResponseDto>
+        // Map each todoList to a todoListResponseDto and add it to a
+        // List<TodoListResponseDto>
         List<TodoListResponseDto> todoListResponseDtoList = new ArrayList<>();
         todoLists.forEach(todoList -> {
 
             // Map each action in the todolist to an actionResponseDto
-            @SuppressWarnings("DuplicatedCode") List<ActionResponseDto> actionResponseDtoList = new ArrayList<>();
+            List<ActionResponseDto> actionResponseDtoList = new ArrayList<>();
 
             todoList.getActionList().forEach(action -> {
 
@@ -98,7 +102,6 @@ public class TodoListController {
 
         });
 
-
         // Prepare response data including pagination information
         Map<String, Object> response = new HashMap<>();
         response.put("currentPage", currentPage);
@@ -111,10 +114,35 @@ public class TodoListController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping(value = {"/all", "/all/"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("authentication.principal.claims['userId'] == #userId and authentication.principal.claims['roles'] == 'USER'")
+    public ResponseEntity<?> getAllTodoLists(@PathVariable Long userId) {
+
+        // Get todo lists and map them to todoListResponseDto
+        List<TodoListResponseDto> todoListResponseDtoList = new ArrayList<>();
+        List<TodoList> todoLists = this.todoListService.getAllTodoLists(userId);
+
+        if (todoLists.isEmpty()) {
+
+            return new ResponseEntity<>("No todo lists available", HttpStatus.NO_CONTENT);
+        }
+
+        todoLists.forEach(todoList -> {
+            TodoListResponseDto responseDto = new TodoListResponseDto();
+            this.todoListMapper.mapTodoListToTodoListResponseDto(todoList, responseDto);
+
+            todoListResponseDtoList.add(responseDto);
+        });
+
+        return new ResponseEntity<>(todoListResponseDtoList, HttpStatus.OK);
+
+    }
+
     // Endpoint to create a new todo list for a user
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("authentication.principal.claims['userId'] == #userId and authentication.principal.claims['roles'] == 'USER'")
-    public ResponseEntity<TodoListResponseDto> createNewTodoList(@PathVariable Long userId, @RequestBody @Valid CreateTodoListDto createTodoListDto) {
+    public ResponseEntity<TodoListResponseDto> createNewTodoList(@PathVariable Long userId,
+                                                                 @RequestBody @Valid CreateTodoListDto createTodoListDto) {
 
         // Map createTodoListDto to todoList
         TodoList todoList = new TodoList();
@@ -140,7 +168,7 @@ public class TodoListController {
         TodoList todoList = this.todoListService.findTodoListById(userId, todoId);
 
         // Map each action in the todolist to an actionResponseDto
-        @SuppressWarnings("DuplicatedCode") List<ActionResponseDto> actionResponseDtoList = new ArrayList<>();
+        List<ActionResponseDto> actionResponseDtoList = new ArrayList<>();
         todoList.getActionList().forEach(action -> {
 
             ActionResponseDto actionResponseDto = new ActionResponseDto();
@@ -162,9 +190,11 @@ public class TodoListController {
     }
 
     // Endpoint to update a specific todo list by ID for a user
-    @PutMapping(value = {"/{todoId}", "/{todoId}/"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = {"/{todoId}",
+            "/{todoId}/"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("authentication.principal.claims['userId'] == #userId and authentication.principal.claims['roles'] == 'USER'")
-    public ResponseEntity<TodoListResponseDto> updateTodoList(@PathVariable Long userId, @PathVariable Long todoId, @RequestBody UpdateTodoListDto updateTodoListDto) {
+    public ResponseEntity<TodoListResponseDto> updateTodoList(@PathVariable Long userId, @PathVariable Long todoId,
+                                                              @RequestBody UpdateTodoListDto updateTodoListDto) {
 
         // Map updateTodoListDto to todoListPartial
         TodoList todoListPartial = new TodoList();

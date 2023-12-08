@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -37,7 +36,7 @@ public class TodoList {
     @ManyToOne
     private UserEntity userEntity;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Action> actionList = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Action> actionList;
 
 }

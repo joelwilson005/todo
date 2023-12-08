@@ -2,7 +2,9 @@ package com.joel.todo.dto;
 
 import com.joel.todo.model.Gender;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -23,7 +25,7 @@ public class CreateUserEntityDto {
     @Email(message = "Email address is not valid.")
     private String emailAddress;
 
-    @Pattern(regexp = "^[a-z0-9_-]{3,16}$")
+
     private String username;
 
 

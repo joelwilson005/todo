@@ -1,7 +1,9 @@
 package com.joel.todo.service;
 
 import com.joel.todo.dto.LoginDto;
+import com.joel.todo.dto.UserEntityResponseDto;
 import com.joel.todo.dto.UserEntityResponseWithTokenDto;
+import com.joel.todo.dto.UsernameAndEmailDto;
 import com.joel.todo.exception.NotUniqueException;
 import com.joel.todo.model.AccountStatus;
 import com.joel.todo.model.Role;
@@ -84,7 +86,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public UserEntityResponseWithTokenDto updateUserEntity(Long id, @Valid UserEntity userEntityPartial) {
+    public UserEntityResponseDto updateUserEntity(Long id, @Valid UserEntity userEntityPartial) {
 
         if (id.longValue() != userEntityPartial.getUserId().longValue()) {
 
@@ -101,26 +103,15 @@ public class UserService implements UserDetailsService {
         // Map userEntityPartial to userEntityInDb
         this.userMapper.mapUserEntityPartialToUserEntity(userEntityPartial, userEntityInDb);
 
-        userEntityInDb.setPassword(this.passwordEncoder.encode(userEntityPartial.getPassword()));
-
         // Save and return newly updated userEntity
-        this.userRepository.save(userEntityInDb);
+        userEntityInDb = this.userRepository.save(userEntityInDb);
 
 
-        // Map userEntityInDb to userEntityResponseWithTokenDto
-        UserEntityResponseWithTokenDto userEntityResponseWithTokenDto = new UserEntityResponseWithTokenDto();
-        this.userMapper.mapUserEntityToUserEntityResponseWithToken(userEntityInDb, userEntityResponseWithTokenDto);
+        // Map userEntity to userEntityResponseDto
+        UserEntityResponseDto userEntityResponseDto = new UserEntityResponseDto();
+        this.userMapper.mapUserEntityToUserEntityResponseDto(userEntityInDb, userEntityResponseDto);
 
-        // Add token to userEntityResponseWithTokenDto
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userEntityPartial.getUsername(), userEntityPartial.getPassword())
-        );
-
-        String token = JWTTokenService.generateJwt(auth, userEntityInDb.getUserId());
-
-        userEntityResponseWithTokenDto.setToken(token);
-
-        return userEntityResponseWithTokenDto;
+        return userEntityResponseDto;
 
     }
 
@@ -154,6 +145,11 @@ public class UserService implements UserDetailsService {
         // Find user based on username
         UserEntity userEntity = this.userRepository.findEntityByUsername(loginDto.getUsername()).orElseThrow();
 
+
+        userEntity.setAccountStatus(AccountStatus.ACTIVE);
+
+        userEntity = this.userRepository.save(userEntity);
+
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
         );
@@ -173,7 +169,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public void updatePasswordToken(Integer token, String email) throws NoSuchElementException {
+    public void updatePasswordToken(String token, String email) throws NoSuchElementException {
 
         UserEntity userEntity = this.userRepository.findUserEntityByEmailAddress(email).orElseThrow();
 
@@ -184,7 +180,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public UserEntity getByResetPasswordToken(Integer token) {
+    public UserEntity getByResetPasswordToken(String token) {
 
         return this.userRepository.findByResetPasswordToken(token).orElseThrow();
     }
@@ -239,5 +235,17 @@ public class UserService implements UserDetailsService {
 
         return this.userRepository.findEntityByUsername(username);
 
+    }
+
+    public HashMap<String, Boolean> isUsernameOrEmailAddressAlreadyPresent(UsernameAndEmailDto usernameAndEmailDto) {
+
+        HashMap<String, Boolean> results = new HashMap<>();
+
+        results.put("emailAddress", this.userRepository.findUserEntityByEmailAddress(usernameAndEmailDto.getEmailAddress()).isPresent());
+
+        results.put("username", this.userRepository.findEntityByUsername(usernameAndEmailDto.getUsername()).isPresent());
+
+
+        return results;
     }
 }

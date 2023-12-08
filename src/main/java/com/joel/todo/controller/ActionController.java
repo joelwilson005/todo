@@ -1,3 +1,4 @@
+// Package declaration for the controller class
 package com.joel.todo.controller;
 
 import com.joel.todo.dto.ActionResponseDto;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// Controller class for handling actions related to todo lists
+@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @RestController
 @RequestMapping({"/users/{userId}/todos/{todoId}/actions", "/users/{userId}/todos/{todoId}/actions/"})
 public class ActionController {
@@ -40,6 +43,7 @@ public class ActionController {
     @PreAuthorize("authentication.principal.claims['userId'] == #userId and authentication.principal.claims['roles'] == 'USER'")
     public ResponseEntity<?> getAllActionsInTodoList(@PathVariable Long userId, @PathVariable Long todoId) {
 
+        // Check if the todo list is empty and return appropriate response
         if (this.todoListService.findTodoListById(userId, todoId).getActionList().isEmpty()) {
             // If the list is empty, return NO_CONTENT status.
             return new ResponseEntity<>("Empty list", HttpStatus.NO_CONTENT);

@@ -6,9 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TodoListRepository extends JpaRepository<TodoList, Long> {
 
     Page<TodoList> findAllByUserEntity_UserId(Long userId, Pageable pageable);
+
+    List<TodoList> findAllByUserEntity_UserId(Long userId);
 
 }

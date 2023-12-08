@@ -15,8 +15,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findEntityByUsername(String username);
 
-    Optional<UserEntity> findByResetPasswordToken(Integer token);
+    Optional<UserEntity> findByResetPasswordToken(String token);
 
-    List<UserEntity> findByAccountStatusAndStatusSetDateBefore(String deleted, LocalDate dateToDelete);
+    List<UserEntity> findByAccountStatusAndStatusSetDateBefore(String accountStatus, LocalDate statusSetDate);
 
 }
