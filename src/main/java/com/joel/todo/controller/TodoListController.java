@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"https://silly-alfajores-7fb4bf.netlify.app/"}, allowCredentials = "true")
 @RestController
 @RequestMapping({"/users/{userId}/todos", "/users/{userId}/todos/"})
 public class TodoListController {

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Controller class for handling actions related to todo lists
-@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"https://silly-alfajores-7fb4bf.netlify.app/"}, allowCredentials = "true")
 @RestController
 @RequestMapping({"/users/{userId}/todos/{todoId}/actions", "/users/{userId}/todos/{todoId}/actions/"})
 public class ActionController {

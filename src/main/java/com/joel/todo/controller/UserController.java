@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 
 // Controller class for handling user-related operations.
-@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"https://silly-alfajores-7fb4bf.netlify.app/"}, allowCredentials = "true")
 @RestController
 @RequestMapping({"/users", "/users/"})
 public class UserController {
