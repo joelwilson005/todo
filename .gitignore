@@ -1,10 +1,6 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
-*.properties
-gcp_key
-
-
 ### STS ###
 .apt_generated
 .classpath
@@ -26,7 +22,6 @@ tmp/
 *.bak
 *.swp
 *~.nib
-local.properties
 .settings/
 .loadpath
 .recommenders
@@ -212,7 +207,4 @@ README.html
 mvnw
 mvnw.cmd
 *.iml
-application.properties
 >>>>>>> Stashed changes
-
-/src/main/resources/todo-application-404703-21add0d2dbe7.json
